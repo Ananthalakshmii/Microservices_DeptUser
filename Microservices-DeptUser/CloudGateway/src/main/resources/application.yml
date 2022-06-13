@@ -1,0 +1,53 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/users/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: USER-SERVICE
+                fallbackuri: forward:/userServiceFallBack
+        - id: department-service
+          uri: lb://DEPARTMENT-SERVICE
+          predicates:
+            - Path=/department/**
+          filters:
+          - name: CircuitBreaker
+            args:
+              name: DEPARTMENT-SERVICE
+              fallbackuri: forward:/departmentServiceFallBack
+              
+              
+management:
+  endpoints:
+    web:
+      exposure:
+        include: hystrix.stream
+              
+              
+hystrix:
+  command:
+    fallbackcmd:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 4000
+            
+
+            
+ribbon:
+  ReadTimeout: 4000
+  ConnectionTimeout: 4000
+  
+  
+
+  
+  
+  
+        
+        
+          
